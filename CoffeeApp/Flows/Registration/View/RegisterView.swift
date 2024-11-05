@@ -17,9 +17,11 @@ protocol RegisterViewInput: AnyObject {
 
 protocol RegisterViewOutput: AnyObject {
     func userRegisterAccount(withEmail email: String, password: String)
+    func presentAlertController(with title: String, _ message: String)
 }
 
 final class RegisterView: UIViewController, RegisterViewInput {
+    
     weak var output: RegisterViewOutput? // make DI
     private let interfaceBuilder: AccountInterfaceBuilder!
     
@@ -88,8 +90,26 @@ final class RegisterView: UIViewController, RegisterViewInput {
         }
     }
     
-    
     @objc private func registerButtonPressed() {
         output?.userRegisterAccount(withEmail: emailTextField.text ?? "", password: passwordTextField.text ?? "")
+    }
+    
+    func presentAlertController(with title: String, _ message: String) {
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .actionSheet
+        )
+        
+        let alertAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] action in
+            guard let self = self else { return }
+            
+            emailTextField.text = ""
+            passwordTextField.text = ""
+            confirmPasswordTextField.text = ""
+        }
+        
+        alertController.addAction(alertAction)
+        self.present(alertController, animated: true)
     }
 }

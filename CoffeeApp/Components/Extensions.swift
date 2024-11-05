@@ -13,3 +13,9 @@ extension UIView {
         views.forEach { addSubview($0) }
     }
 }
+
+extension HTTPURLResponse {
+    func isSuccess() -> Bool {
+        return statusCode >= 200 && statusCode < 300
+    }
+}

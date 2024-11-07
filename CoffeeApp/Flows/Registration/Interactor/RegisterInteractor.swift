@@ -14,6 +14,7 @@ protocol RegisterInteractorInput: AnyObject {
 
 protocol RegisterInteractorOutput: AnyObject {
     func sendError(with title: String, _ message: String)
+    func registerSuccessfully()
 }
 
 final class RegisterInteractor: RegisterInteractorInput {
@@ -35,10 +36,16 @@ final class RegisterInteractor: RegisterInteractorInput {
             case .success(let token):
                 storageService.saveAuth(token);
                 print("success")
-                // open next screen
-            case .serverError(let err): output?.sendError(with: "Server Error", Errors.messageFor(err: err.message))
-            case .networkError(let err): output?.sendError(with: "Network Error", Errors.messageFor(err: err))
-            case .authError(let err): output?.sendError(with: "Authorization Error", Errors.messageFor(err: err.message))
+                output?.registerSuccessfully()
+            case .serverError(let err): output?.sendError(
+                with: AlertMessage.serverError.rawValue, Errors.messageFor(err: err.message)
+            )
+            case .networkError(let err): output?.sendError(
+                with: AlertMessage.networkError.rawValue, Errors.messageFor(err: err)
+            )
+            case .authError(let err): output?.sendError(
+                with: AlertMessage.authorizationError.rawValue, Errors.messageFor(err: err.message)
+            )
             }
         }
     }

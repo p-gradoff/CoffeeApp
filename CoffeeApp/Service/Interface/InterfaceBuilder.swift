@@ -35,7 +35,7 @@ final class InterfaceBuilder: AccountInterfaceBuilder {
             $0.layer.borderWidth = 2
             $0.layer.borderColor = UIColor.auth.cgColor
             
-            $0.textColor = UIColor.placeholder
+            $0.textColor = .auth
             $0.placeholder = placeholder.rawValue
             $0.tintColor = UIColor.placeholder
             $0.font = placeholder == .email ? .getFont(fontType: .displayRegular, size: 18) : .getFont(fontType: .montserrat, size: 18)

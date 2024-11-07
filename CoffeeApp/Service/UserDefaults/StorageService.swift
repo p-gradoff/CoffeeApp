@@ -17,20 +17,20 @@ final class StorageService {
     
     func saveAuth(_ token: TokenResponse) {
         let defaults = UserDefaults.standard
-        defaults.set(token.accessToken, forKey: StorageService.KEY_ACCESS_TOKEN)
+        defaults.set(token.token, forKey: StorageService.KEY_ACCESS_TOKEN)
         defaults.set(token.tokenLifetime, forKey: StorageService.KEY_ACCESS_TOKEN_EXPIRE)
     }
     
     func getToken() -> TokenResponse {
         let defaults = UserDefaults.standard
         let accessToken = defaults.object(forKey: StorageService.KEY_ACCESS_TOKEN) as? String ?? ""
-        let tokenLifetime = defaults.object(forKey: StorageService.KEY_ACCESS_TOKEN_EXPIRE) as? Int ?? 0
+        let tokenLifetime = defaults.object(forKey: StorageService.KEY_ACCESS_TOKEN_EXPIRE) as? Int32 ?? 0
         
-        return TokenResponse(accessToken: accessToken, tokenLifetime: tokenLifetime)
+        return TokenResponse(token: accessToken, tokenLifetime: tokenLifetime)
     }
     
     func haveAuthToken() -> Bool {
-        return !getToken().accessToken.isEmpty
+        return !getToken().token.isEmpty
     }
     
     func dropToken() {

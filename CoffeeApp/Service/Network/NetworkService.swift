@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 enum NetworkRequestCollection {
-    static let basedURL: String = "http://147.78.66.203:3210/"
+    static let basedURL: String = "http://147.78.66.203:3210"
     
     case register, login, location(String), locations
     
@@ -47,21 +47,20 @@ final class NetworkService {
     
     private init() { }
     
-    private func formRequest(url: URL, data: Data = Data(), method: String = "POST", contentType: String = "application/json", ignoreJwtAuth: Bool = false) -> URLRequest {
+    private func formRequest(url: URL, data: Data, method: String = "POST", contentType: String = "application/json", ignoreJwtAuth: Bool = false) -> URLRequest {
         
-        var request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad)
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
         request.httpMethod = method
-        request.addValue(contentType, forHTTPHeaderField: "Content-Type")
-        
         request.httpBody = data
+        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
         
-        if !token.accessToken.isEmpty && !ignoreJwtAuth {
-            request.addValue("Bearer \(token.accessToken)", forHTTPHeaderField: "Authorization")
+        if !token.token.isEmpty && !ignoreJwtAuth {
+            request.addValue("Bearer \(token.token)", forHTTPHeaderField: "Authorization")
         }
         
         return request
     }
-
+    
     private func doRequest<T: Decodable>(request: URLRequest, completion: @escaping(Result<T>) -> ()) {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
@@ -82,8 +81,9 @@ final class NetworkService {
                 }
                 return
             }
-            
+
             let responseBody: Result<T> = httpResponse.isSuccess() ? self.parseResponse(data: data) : self.parseError(data: data)
+            
             DispatchQueue.main.async {
                 completion(responseBody)
             }

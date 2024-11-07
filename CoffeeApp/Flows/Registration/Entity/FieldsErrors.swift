@@ -13,4 +13,6 @@ enum FieldsError: String {
     case passwordLowercased = "Password must contain at least one uppercase character"
     case passwordUppercased = "Password must contain at least one lowercase character"
     case passwordNotContainDigits = "Password must contain at least one digit"
+    case passwordsDontMatch = "Passwords don't match"
+    case incorrectRegex = "System error. Incorrect regular expression"
 }

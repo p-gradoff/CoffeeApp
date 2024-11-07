@@ -13,16 +13,18 @@ import SnapKit
 
 protocol RegisterViewInput: AnyObject {
     var output: RegisterViewOutput? { get set }
+    func presentAlertController(with title: String, _ message: String)
+    func resetEmailTextField()
+    func resetPasswordsTextField()
 }
 
 protocol RegisterViewOutput: AnyObject {
-    func userRegisterAccount(withEmail email: String, password: String)
-    func presentAlertController(with title: String, _ message: String)
+    func userRegisterAccount(withEmail email: String, password: String, confirmPassword: String)
 }
 
-final class RegisterView: UIViewController, RegisterViewInput {
+final class RegisterView: UIViewController {
     
-    weak var output: RegisterViewOutput? // make DI
+    var output: RegisterViewOutput? // make DI
     private let interfaceBuilder: AccountInterfaceBuilder!
     
     private lazy var emailLabel: UILabel = interfaceBuilder.createLabel(withHeader: .email)
@@ -91,25 +93,34 @@ final class RegisterView: UIViewController, RegisterViewInput {
     }
     
     @objc private func registerButtonPressed() {
-        output?.userRegisterAccount(withEmail: emailTextField.text ?? "", password: passwordTextField.text ?? "")
+        output?.userRegisterAccount(
+            withEmail: emailTextField.text ?? "",
+            password: passwordTextField.text ?? "",
+            confirmPassword: confirmPasswordTextField.text ?? ""
+        )
     }
-    
+}
+
+extension RegisterView: RegisterViewInput {
     func presentAlertController(with title: String, _ message: String) {
         let alertController = UIAlertController(
             title: title,
             message: message,
-            preferredStyle: .actionSheet
+            preferredStyle: .alert
         )
         
-        let alertAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] action in
-            guard let self = self else { return }
-            
-            emailTextField.text = ""
-            passwordTextField.text = ""
-            confirmPasswordTextField.text = ""
-        }
+        let alertAction = UIAlertAction(title: "Cancel", style: .cancel)
         
         alertController.addAction(alertAction)
         self.present(alertController, animated: true)
+    }
+    
+    func resetEmailTextField() {
+        emailTextField.text = ""
+    }
+    
+    func resetPasswordsTextField() {
+        passwordTextField.text = ""
+        confirmPasswordTextField.text = ""
     }
 }

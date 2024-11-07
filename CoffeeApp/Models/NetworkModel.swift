@@ -8,8 +8,8 @@
 import Foundation
 
 struct TokenResponse: Codable {
-    let accessToken: String
-    let tokenLifetime: Int
+    let token: String
+    let tokenLifetime: Int32?
 }
 
 struct ErrorResponse: Codable {

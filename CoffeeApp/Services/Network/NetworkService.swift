@@ -28,7 +28,7 @@ enum NetworkRequestCollection {
     }
 }
 
-enum Result<T> {
+enum RequestResult<T> {
     case success(_ response: T)
     case serverError(_ err: ErrorResponse)
     case authError(_ err: ErrorResponse)
@@ -36,11 +36,11 @@ enum Result<T> {
 }
 
 protocol RegisterServiceInput: AnyObject {
-    func registerUser(withData data: User, completion: @escaping (Result<TokenResponse>) -> ())
+    func registerUser(withData data: User, completion: @escaping (RequestResult<TokenResponse>) -> ())
 }
 
 protocol AuthServiceInput: AnyObject {
-    func authorizeUser(withData data: User, completion: @escaping (Result<TokenResponse>) -> ())
+    func authorizeUser(withData data: User, completion: @escaping (RequestResult<TokenResponse>) -> ())
 }
 
 final class NetworkService {
@@ -65,7 +65,7 @@ final class NetworkService {
         return request
     }
     
-    private func doRequest<T: Decodable>(request: URLRequest, completion: @escaping(Result<T>) -> ()) {
+    private func doRequest<T: Decodable>(request: URLRequest, completion: @escaping(RequestResult<T>) -> ()) {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
@@ -86,7 +86,7 @@ final class NetworkService {
                 return
             }
 
-            let responseBody: Result<T> = httpResponse.isSuccess() ? self.parseResponse(data: data) : self.parseError(data: data)
+            let responseBody: RequestResult<T> = httpResponse.isSuccess() ? self.parseResponse(data: data) : self.parseError(data: data)
             
             DispatchQueue.main.async {
                 completion(responseBody)
@@ -95,7 +95,7 @@ final class NetworkService {
         task.resume()
     }
     
-    private func parseResponse<T: Decodable>(data: Data) -> Result<T> {
+    private func parseResponse<T: Decodable>(data: Data) -> RequestResult<T> {
         do {
             return .success(try JSONDecoder().decode(T.self, from: data))
         } catch {
@@ -103,7 +103,7 @@ final class NetworkService {
         }
     }
     
-    private func parseError<T>(data: Data) -> Result<T> {
+    private func parseError<T>(data: Data) -> RequestResult<T> {
         do {
             let errorResponse = try JSONDecoder().decode(ErrorResponse.self, from: data)
             return errorResponse.isAuth() ? .authError(errorResponse) : .serverError(errorResponse)
@@ -115,7 +115,7 @@ final class NetworkService {
 
 // TODO: method's enum
 extension NetworkService: RegisterServiceInput {
-    func registerUser(withData data: User, completion: @escaping (Result<TokenResponse>) -> ()) {
+    func registerUser(withData data: User, completion: @escaping (RequestResult<TokenResponse>) -> ()) {
         let url = NetworkRequestCollection.register.absoluteURL
         let body = try! JSONEncoder().encode(data)
         let request = formRequest(url: url, data: body, method: "POST", ignoreJwtAuth: true)
@@ -127,7 +127,7 @@ extension NetworkService: RegisterServiceInput {
 }
 
 extension NetworkService: AuthServiceInput {
-    func authorizeUser(withData data: User, completion: @escaping (Result<TokenResponse>) -> ()) {
+    func authorizeUser(withData data: User, completion: @escaping (RequestResult<TokenResponse>) -> ()) {
         let url = NetworkRequestCollection.login.absoluteURL
         let body = try! JSONEncoder().encode(data)
         let request = formRequest(url: url, data: body, method: "POST", ignoreJwtAuth: true)

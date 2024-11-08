@@ -12,9 +12,7 @@ protocol RegisterPresenterInput: AnyObject {
     var output: RegisterPresenterOutput! { get }
 }
 
-protocol RegisterPresenterOutput: AnyObject {
-    func didRegister()
-}
+protocol RegisterPresenterOutput: AnyObject { }
 
 final class RegisterPresenter {
     private let interactor: RegisterInteractorInput
@@ -31,30 +29,26 @@ final class RegisterPresenter {
 }
 
 extension RegisterPresenter: RegisterViewOutput {
-    func presentAlertController(with title: String, _ message: String) {
-        view.presentAlertController(with: title, message)
-    }
-    
     func userRegisterAccount(withEmail email: String, password: String, confirmPassword: String) {
         let validation = validator.checkRegisterFields(email, password, confirmPassword)
         switch validation {
         case nil: interactor.registerAccount(withEmail: email, password: password)
         case .emailIsIncorrect:
-            self.presentAlertController(with: validation!.rawValue, AlertMessage.validationError.rawValue)
+            view.presentAlertController(with: validation!.rawValue, AlertMessage.validationError.rawValue)
             view.resetEmailTextField()
         default:
-            self.presentAlertController(with: validation!.rawValue, AlertMessage.validationError.rawValue)
+            view.presentAlertController(with: validation!.rawValue, AlertMessage.validationError.rawValue)
             view.resetPasswordsTextField()
         }
     }
 }
 
-extension RegisterPresenter: RegisterInteractorOutput {    
+extension RegisterPresenter: RegisterInteractorOutput {
     func sendError(with title: String, _ message: String) {
-        self.presentAlertController(with: title, message)
+        view.presentAlertController(with: title, message)
     }
     
-    func registerSuccessfully() {
+    func registeredSuccessfully() {
         self.router.openCoffeeShopsList()
     }
 }

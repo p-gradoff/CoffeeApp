@@ -39,6 +39,10 @@ protocol RegisterServiceInput: AnyObject {
     func registerUser(withData data: User, completion: @escaping (Result<TokenResponse>) -> ())
 }
 
+protocol AuthServiceInput: AnyObject {
+    func authorizeUser(withData data: User, completion: @escaping (Result<TokenResponse>) -> ())
+}
+
 final class NetworkService {
     static let shared = NetworkService()
     static private let ACCESS_TOKEN_LIFETIME_THRESHHOLD_SECONDS: Int = 3600000
@@ -116,6 +120,18 @@ extension NetworkService: RegisterServiceInput {
         let body = try! JSONEncoder().encode(data)
         let request = formRequest(url: url, data: body, method: "POST", ignoreJwtAuth: true)
     
+        self.doRequest(request: request) { result in
+            completion(result)
+        }
+    }
+}
+
+extension NetworkService: AuthServiceInput {
+    func authorizeUser(withData data: User, completion: @escaping (Result<TokenResponse>) -> ()) {
+        let url = NetworkRequestCollection.login.absoluteURL
+        let body = try! JSONEncoder().encode(data)
+        let request = formRequest(url: url, data: body, method: "POST", ignoreJwtAuth: true)
+        
         self.doRequest(request: request) { result in
             completion(result)
         }

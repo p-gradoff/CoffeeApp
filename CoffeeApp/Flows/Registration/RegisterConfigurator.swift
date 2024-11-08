@@ -11,12 +11,11 @@ final class RegisterConfigurator {
     static func configureRegisterModule() -> UIViewController {
         let interfaceBuilder = InterfaceBuilder()
         let validator = Validator()
-        let view = RegisterView(with: interfaceBuilder)
-        
         let networkService: RegisterServiceInput = NetworkService.shared
-        let storageService = StorageService.shared
         
-        let interactor = RegisterInteractor(storageService: storageService, networkManager: networkService)
+        let view = RegisterView(with: interfaceBuilder)
+        let interactor = RegisterInteractor(networkManager: networkService)
+        
         let router = RegisterRouter()
         router.rootViewController = view
         

@@ -14,16 +14,14 @@ protocol RegisterInteractorInput: AnyObject {
 
 protocol RegisterInteractorOutput: AnyObject {
     func sendError(with title: String, _ message: String)
-    func registerSuccessfully()
+    func registeredSuccessfully()
 }
 
 final class RegisterInteractor: RegisterInteractorInput {
     weak var output: RegisterInteractorOutput?
-    var storageService: StorageService!
     var networkManager: RegisterServiceInput!
     
-    init(storageService: StorageService!, networkManager: RegisterServiceInput!) {
-        self.storageService = storageService
+    init(networkManager: RegisterServiceInput!) {
         self.networkManager = networkManager
     }
     
@@ -33,10 +31,10 @@ final class RegisterInteractor: RegisterInteractorInput {
             guard let self = self else { return }
             
             switch result {
-            case .success(let token):
-                storageService.saveAuth(token);
-                print("success")
-                output?.registerSuccessfully()
+            case .success:
+                // storageService.saveAuth(token);
+                // print("success")
+                output?.registeredSuccessfully()
             case .serverError(let err): output?.sendError(
                 with: AlertMessage.serverError.rawValue, Errors.messageFor(err: err.message)
             )

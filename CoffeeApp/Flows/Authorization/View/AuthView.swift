@@ -1,29 +1,27 @@
 //
-//  RegisterViewController.swift
+//  AuthViewController.swift
 //  CoffeeApp
 //
-//  Created by Павел Градов on 30.10.2024.
+//  Created by Павел Градов on 08.11.2024.
 //
 
-import Foundation
 import UIKit
 import SnapKit
 
-// MARK: made View, ViewInput, ViewOutput
-
-protocol RegisterViewInput: AnyObject {
-    var output: RegisterViewOutput? { get set }
+protocol AuthViewInput: AnyObject {
+    var output: AuthViewOutput? { get set }
     func presentAlertController(with title: String, _ message: String)
     func resetEmailTextField()
-    func resetPasswordsTextField()
+    func resetPasswordTextField()
 }
 
-protocol RegisterViewOutput: AnyObject {
-    func userRegisterAccount(withEmail email: String, password: String, confirmPassword: String)
+protocol AuthViewOutput: AnyObject {
+    func authorizeUser(withEmail email: String, password: String)
 }
 
-final class RegisterView: UIViewController {
-    var output: RegisterViewOutput?
+final class AuthViewController: UIViewController {
+    
+    var output: AuthViewOutput?
     private let interfaceBuilder: AccountInterfaceBuilder
     
     private lazy var emailLabel: UILabel = interfaceBuilder.createLabel(withHeader: .email)
@@ -34,10 +32,6 @@ final class RegisterView: UIViewController {
     private lazy var passwordTextField: UITextField = interfaceBuilder.createTextField(withPlaceholder: .password)
     private lazy var passwordStackView: UIStackView = interfaceBuilder.createStackView()
     
-    private lazy var confirmPasswordLabel: UILabel = interfaceBuilder.createLabel(withHeader: .confirmPassword)
-    private lazy var confirmPasswordTextField: UITextField = interfaceBuilder.createTextField(withPlaceholder: .password)
-    private lazy var confirmPasswordStackView: UIStackView = interfaceBuilder.createStackView()
-    
     private lazy var fieldsStackView: UIStackView = {
         $0.axis = .vertical
         $0.spacing = 24
@@ -46,12 +40,10 @@ final class RegisterView: UIViewController {
         return $0
     }(UIStackView())
     
-    private lazy var registerButton: UIButton = interfaceBuilder.createButton(withTitle: ButtonTitle.register.rawValue)
-    
-    // , alert: AlertProvider
+    private lazy var authButton: UIButton = interfaceBuilder.createButton(withTitle: ButtonTitle.enter.rawValue)
+
     init(with interfaceBuilder: AccountInterfaceBuilder) {
         self.interfaceBuilder = interfaceBuilder
-        // self.alert = alert
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -61,25 +53,26 @@ final class RegisterView: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Регистрация"
+        title = "Вход"
+        navigationItem.hidesBackButton = true
         setupViews()
     }
     
     private func setupViews() {
         view.backgroundColor = .white
         
-        registerButton.addTarget(self, action: #selector(registerButtonPressed), for: .touchUpInside)
+        authButton.addTarget(self, action: #selector(authButtonPressed), for: .touchUpInside)
         
         setupStackViews()
-        view.addSubviews(fieldsStackView, registerButton)
+        view.addSubviews(fieldsStackView, authButton)
         
         fieldsStackView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(278)
             $0.horizontalEdges.equalToSuperview().inset(18)
-            $0.height.equalTo(267)
+            $0.height.equalTo(170)
         }
         
-        registerButton.snp.makeConstraints {
+        authButton.snp.makeConstraints {
             $0.top.equalTo(fieldsStackView.snp.bottom).offset(30)
             $0.horizontalEdges.equalTo(fieldsStackView.snp.horizontalEdges)
             $0.height.equalTo(48)
@@ -88,21 +81,19 @@ final class RegisterView: UIViewController {
         func setupStackViews() {
             [emailLabel, emailTextField].forEach { view in emailStackView.addArrangedSubview(view) }
             [passwordLabel, passwordTextField].forEach { view in passwordStackView.addArrangedSubview(view) }
-            [confirmPasswordLabel, confirmPasswordTextField].forEach { view in confirmPasswordStackView.addArrangedSubview(view) }
-            [emailStackView, passwordStackView, confirmPasswordStackView].forEach { view in fieldsStackView.addArrangedSubview(view) }
+            [emailStackView, passwordStackView].forEach { view in fieldsStackView.addArrangedSubview(view) }
         }
     }
-    
-    @objc private func registerButtonPressed() {
-        output?.userRegisterAccount(
+
+    @objc private func authButtonPressed() {
+        output?.authorizeUser(
             withEmail: emailTextField.text ?? "",
-            password: passwordTextField.text ?? "",
-            confirmPassword: confirmPasswordTextField.text ?? ""
+            password: passwordTextField.text ?? ""
         )
     }
 }
 
-extension RegisterView: RegisterViewInput, AlertProvider {
+extension AuthViewController: AuthViewInput, AlertProvider {
     func presentAlertController(with title: String, _ message: String) {
         let controller = getController(with: title, message)
         self.present(controller, animated: true)
@@ -112,9 +103,7 @@ extension RegisterView: RegisterViewInput, AlertProvider {
         emailTextField.text = ""
     }
     
-    func resetPasswordsTextField() {
+    func resetPasswordTextField() {
         passwordTextField.text = ""
-        confirmPasswordTextField.text = ""
     }
 }
-

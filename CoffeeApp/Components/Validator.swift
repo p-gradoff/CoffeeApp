@@ -11,8 +11,8 @@ protocol RegisterValidation: AnyObject {
     func checkRegisterFields(_ email: String, _ password: String, _ confirmPassword: String) -> FieldsError?
 }
 
-protocol AuthorizationValidation: AnyObject {
-    func checkAuthorizationFields(_ email: String, _ password: String) -> FieldsError?
+protocol AuthValidation: AnyObject {
+    func checkAuthFields(_ email: String, _ password: String) -> FieldsError?
 }
 
 enum AlertMessage: String {
@@ -68,10 +68,10 @@ extension Validator: RegisterValidation {
     }
 }
 
-extension Validator: AuthorizationValidation {
-    func checkAuthorizationFields(_ email: String, _ password: String) -> FieldsError? {
+extension Validator: AuthValidation {
+    func checkAuthFields(_ email: String, _ password: String) -> FieldsError? {
         if let isEmailCorrect = checkEmail(email) { return isEmailCorrect }
-        if let isPasswordCorrect = checkEmail(password) { return isPasswordCorrect }
+        if let isPasswordCorrect = checkPassword(password) { return isPasswordCorrect }
         
         return nil
     }

@@ -49,6 +49,6 @@ extension RegisterPresenter: RegisterInteractorOutput {
     }
     
     func registeredSuccessfully() {
-        self.router.openCoffeeShopsList()
+        self.router.openAuthorization()
     }
 }

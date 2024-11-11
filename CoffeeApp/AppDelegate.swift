@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let navigationBarAppearance = UINavigationBar.appearance()
         navigationBarAppearance.titleTextAttributes = [
-            NSAttributedString.Key.foregroundColor: UIColor.auth,
+            NSAttributedString.Key.foregroundColor: UIColor.primaryText,
             NSAttributedString.Key.font: UIFont.getFont(fontType: .displayBold, size: 18)
         ]
         

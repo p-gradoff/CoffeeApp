@@ -9,30 +9,38 @@ import Foundation
 import CoreLocation
 import UIKit
 
-protocol Distance: AnyObject {
-    func getDistance(from shopPoint: Point) -> Double
+enum LocationResult<T> {
+    case success(_ distance: Double)
+    case locationError(_ error: String)
+}
+
+protocol LocationDistance: AnyObject {
+    func getDistance(fromUserTo shopPoint: Point, completion: (LocationResult<Double>) -> Void)
 }
 
 final class LocationService: NSObject {
     private let locationManager = CLLocationManager()
-    private var locationResult: Result<CLLocation, Error>!
+    private var userLocation: CLLocation?
     
-    init(location: CLLocation!) {
+    override init() {
         super.init()
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            locationManager.requestLocation()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            if CLLocationManager.locationServicesEnabled() {
+                locationManager.desiredAccuracy = kCLLocationAccuracyBest
+                locationManager.requestLocation()
+            }
         }
     }
     
-    private func getLocation(from point: Point) -> CLLocation? {
-        guard let latitude = Double(point.latitude), let longtitude = Double(point.longtitude) else {
-            return nil
-        }
+    private func getShopLocation(from point: Point) -> CLLocation {
+        let latitude = Double(point.latitude) ?? 0.0
+        let longtitude = Double(point.longtitude) ?? 0.0
         
         let location = CLLocation(latitude: latitude, longitude: longtitude)
         return location
@@ -47,30 +55,23 @@ extension LocationService: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        self.locationResult = .success(location)
+        self.userLocation = location // user location
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
-        self.locationResult = .failure(error)
+        self.userLocation = nil
     }
 }
 
-extension LocationService: Distance {
-    func getDistance(from shopPoint: Point) -> Double {
-        guard let shopLocation = getLocation(from: shopPoint) else {
-            // send error
-            return -1
+extension LocationService: LocationDistance {
+    func getDistance(fromUserTo shopPoint: Point, completion: (LocationResult<Double>) -> Void) {
+        guard let userLocation else {
+            completion(.locationError(LocationError.ERR_CANT_GET_USER_LOCATION))
+            return
         }
         
-        switch locationResult {
-        case .success(let userlocation):
-            let distance = userlocation.distance(from: shopLocation)
-            return distance
-        case .failure(let error):
-            // make error handling
-            return 0
-        case .none:
-            return -1
-        }
+        let shopLocation = getShopLocation(from: shopPoint)
+        let distance = userLocation.distance(from: shopLocation)
+        completion(.success(distance))
     }
 }

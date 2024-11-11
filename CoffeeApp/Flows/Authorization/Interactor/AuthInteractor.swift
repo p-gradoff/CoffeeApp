@@ -19,10 +19,10 @@ protocol AuthInteractorOutput: AnyObject {
 
 final class AuthInteractor: AuthInteractorInput {
     weak var output: AuthInteractorOutput?
-    var storageService: StorageService!
-    var networkManager: AuthServiceInput!
+    private let storageService: StorageService
+    private let networkManager: AuthServiceInput
     
-    init(storageService: StorageService!, networkManager: AuthServiceInput!) {
+    init(storageService: StorageService, networkManager: AuthServiceInput) {
         self.storageService = storageService
         self.networkManager = networkManager
     }
@@ -44,9 +44,5 @@ final class AuthInteractor: AuthInteractorInput {
                 output?.sendError(with: AlertMessage.authorizationError.rawValue, Errors.messageFor(err: err.message))
             }
         }
-    }
-    
-    func authorizedSuccessfully() {
-        // router open next screen
     }
 }

@@ -40,32 +40,41 @@ protocol RegisterServiceInput: AnyObject {
 }
 
 protocol AuthServiceInput: AnyObject {
-    func authorizeUser(withData data: User, completion: @escaping (RequestResult<TokenResponse>) -> ())
+    func authorizeUser(withData data: User, completion: @escaping (RequestResult<TokenResponse>) -> Void)
+}
+
+protocol LocationListServiceInput: AnyObject {
+    func loadLocations(completion: @escaping (RequestResult<LocationList>) -> Void)
 }
 
 final class NetworkService {
     static let shared = NetworkService()
-    static private let ACCESS_TOKEN_LIFETIME_THRESHHOLD_SECONDS: Int = 3600000
     
     private var token = StorageService.shared.getToken()
     
     private init() { }
     
-    private func formRequest(url: URL, data: Data, method: String = "POST", contentType: String = "application/json", ignoreJwtAuth: Bool = false) -> URLRequest {
+    private func formRequest(
+        url: URL,
+        data: Data? = nil,
+        method: String = RequestMethod.post.rawValue,
+        contentType: String = ContentType.appJson.rawValue,
+        ignoreJwtAuth: Bool = false
+    ) -> URLRequest {
         
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
         request.httpMethod = method
-        request.httpBody = data
-        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
+        if let data { request.httpBody = data }
+        request.setValue(contentType, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
         
         if !token.token.isEmpty && !ignoreJwtAuth {
-            request.addValue("Bearer \(token.token)", forHTTPHeaderField: "Authorization")
+            request.addValue("Bearer \(token.token)", forHTTPHeaderField: HTTPHeaderField.auth.rawValue)
         }
         
         return request
     }
     
-    private func doRequest<T: Decodable>(request: URLRequest, completion: @escaping(RequestResult<T>) -> ()) {
+    private func doRequest<T: Decodable>(request: URLRequest, completion: @escaping(RequestResult<T>) -> Void) {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
@@ -115,10 +124,10 @@ final class NetworkService {
 
 // TODO: method's enum
 extension NetworkService: RegisterServiceInput {
-    func registerUser(withData data: User, completion: @escaping (RequestResult<TokenResponse>) -> ()) {
+    func registerUser(withData data: User, completion: @escaping (RequestResult<TokenResponse>) -> Void) {
         let url = NetworkRequestCollection.register.absoluteURL
         let body = try! JSONEncoder().encode(data)
-        let request = formRequest(url: url, data: body, method: "POST", ignoreJwtAuth: true)
+        let request = formRequest(url: url, data: body, method: RequestMethod.post.rawValue, ignoreJwtAuth: true)
     
         self.doRequest(request: request) { result in
             completion(result)
@@ -127,10 +136,21 @@ extension NetworkService: RegisterServiceInput {
 }
 
 extension NetworkService: AuthServiceInput {
-    func authorizeUser(withData data: User, completion: @escaping (RequestResult<TokenResponse>) -> ()) {
+    func authorizeUser(withData data: User, completion: @escaping (RequestResult<TokenResponse>) -> Void) {
         let url = NetworkRequestCollection.login.absoluteURL
         let body = try! JSONEncoder().encode(data)
-        let request = formRequest(url: url, data: body, method: "POST", ignoreJwtAuth: true)
+        let request = formRequest(url: url, data: body, method: RequestMethod.post.rawValue, ignoreJwtAuth: true)
+        
+        self.doRequest(request: request) { result in
+            completion(result)
+        }
+    }
+}
+
+extension NetworkService: LocationListServiceInput {
+    func loadLocations(completion: @escaping (RequestResult<LocationList>) -> Void) {
+        let url = NetworkRequestCollection.locations.absoluteURL
+        let request = formRequest(url: url, method: RequestMethod.get.rawValue)
         
         self.doRequest(request: request) { result in
             completion(result)

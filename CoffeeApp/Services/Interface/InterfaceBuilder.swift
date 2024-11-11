@@ -20,7 +20,7 @@ final class InterfaceBuilder: AccountInterfaceBuilder {
         {
             $0.text = section.rawValue
             $0.textAlignment = .left
-            $0.textColor = .auth
+            $0.textColor = .primaryText
             $0.font = .getFont(fontType: .displayRegular, size: 15)
             
             $0.setContentHuggingPriority(.required, for: .vertical)
@@ -33,9 +33,9 @@ final class InterfaceBuilder: AccountInterfaceBuilder {
         {
             $0.layer.cornerRadius = 22
             $0.layer.borderWidth = 2
-            $0.layer.borderColor = UIColor.auth.cgColor
+            $0.layer.borderColor = UIColor.primaryText.cgColor
             
-            $0.textColor = .auth
+            $0.textColor = .primaryText
             $0.placeholder = placeholder.rawValue
             $0.tintColor = UIColor.placeholder
             $0.font = placeholder == .email ? .getFont(fontType: .displayRegular, size: 18) : .getFont(fontType: .montserrat, size: 18)
@@ -74,7 +74,7 @@ final class InterfaceBuilder: AccountInterfaceBuilder {
     func createButton(withTitle title: String) -> UIButton {
         {
             $0.setTitle(title, for: .normal)
-            $0.setTitleColor(.buttonTitle, for: .normal)
+            $0.setTitleColor(.cellFilling, for: .normal)
             $0.titleLabel?.font = .getFont(fontType: .displayBold, size: 18)
             $0.backgroundColor = .buttonFilling
             $0.layer.cornerRadius = 22

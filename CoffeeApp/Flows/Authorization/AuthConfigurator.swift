@@ -18,7 +18,8 @@ final class AuthConfigurator {
         let view = AuthViewController(with: interfaceBuilder)
         let interactor = AuthInteractor(storageService: storageService, networkManager: networkManager)
         
-        let router: AuthRouterInput = AuthRouter()
+        let router = AuthRouter()
+        router.rootViewController = view
         
         let presenter = AuthPresenter(
             interactor: interactor,

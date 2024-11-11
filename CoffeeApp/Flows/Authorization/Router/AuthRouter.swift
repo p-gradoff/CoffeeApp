@@ -6,14 +6,17 @@
 //
 
 import Foundation
+import UIKit
 
-protocol AuthRouterInput {
+protocol AuthRouterInput: AnyObject {
     func openCoffeeShopsList()
 }
 
 final class AuthRouter: AuthRouterInput {
+    weak var rootViewController: UIViewController?
     
     func openCoffeeShopsList() {
-        print("opened cofee shops list")
+        let coffeeShopListViewController = ListConfigurator.configureListModule()
+        rootViewController?.navigationController?.pushViewController(coffeeShopListViewController, animated: true)
     }
 }

@@ -9,13 +9,13 @@ import Foundation
 import UIKit
 
 protocol RegisterRouterInput {
-    func openCoffeeShopsList()
+    func openAuthorization()
 }
 
 final class RegisterRouter: RegisterRouterInput {
     weak var rootViewController: UIViewController?
     
-    func openCoffeeShopsList() {
+    func openAuthorization() {
         let authViewController = AuthConfigurator.configureAuthModule()
         rootViewController?.navigationController?.pushViewController(authViewController, animated: true)
     }

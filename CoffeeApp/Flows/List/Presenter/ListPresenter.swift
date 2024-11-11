@@ -29,20 +29,6 @@ extension ListPresenter: ListViewOutput {
     func getShopsInfo() {
         interactor.getDistances()
     }
-    /*
-    var shopsInfo: [ShopInfo] {
-        var shopInfo: [ShopInfo] = []
-        interactor.getDistances { result in
-            switch result {
-            case .success(let info):
-                shopInfo = info
-            case .failure(let err):
-                view.presentAlertController(with: err.localizedDescription, "Location Error")
-            }
-        }
-        return shopInfo
-    }
-     */
 }
 
 extension ListPresenter: ListInteractorOutput {

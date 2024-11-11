@@ -10,10 +10,10 @@ import UIKit
 
 final class AuthConfigurator {
     static func configureAuthModule() -> UIViewController {
-        let validator: AuthValidation = Validator()
-        let interfaceBuilder: AccountInterfaceBuilder = InterfaceBuilder()
+        let validator = Validator()
+        let interfaceBuilder = InterfaceBuilder()
         let storageService = StorageService.shared
-        let networkManager: AuthServiceInput = NetworkService.shared
+        let networkManager = NetworkService.shared
         
         let view = AuthViewController(with: interfaceBuilder)
         let interactor = AuthInteractor(storageService: storageService, networkManager: networkManager)

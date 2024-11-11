@@ -11,13 +11,19 @@ final class ListConfigurator {
     static func configureListModule() -> UIViewController {
         let storageService = StorageService.shared
         let networkService = NetworkService.shared
-        let locationService: LocationDistance = LocationService()
+        let locationService = LocationService()
         let distanceManager = DistanceManager()
+        let interfaceBuilder = InterfaceBuilder()
         
-        let interactor = ListInteractor(storageService: storageService, networkService: networkService, locationService: locationService, distanceManager: distanceManager)
+        let interactor = ListInteractor(
+            storageService: storageService,
+            networkService: networkService,
+            locationService: locationService,
+            distanceManager: distanceManager
+        )
         
         let router = ListRouter()
-        let view = ListView()
+        let view = ListView(interfaceBuilder: interfaceBuilder)
         let presenter = ListPresenter(interactor: interactor, router: router, view: view)
         
         view.output = presenter

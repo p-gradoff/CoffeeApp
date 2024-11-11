@@ -39,8 +39,8 @@ final class LocationService: NSObject {
     }
     
     private func getShopLocation(from point: Point) -> CLLocation {
-        let latitude = Double(point.latitude) ?? 0.0
-        let longtitude = Double(point.longtitude) ?? 0.0
+        let latitude = Double(point.latitude)!
+        let longtitude = Double(point.longitude)!
         
         let location = CLLocation(latitude: latitude, longitude: longtitude)
         return location

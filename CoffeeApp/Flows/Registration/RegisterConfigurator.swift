@@ -11,7 +11,7 @@ final class RegisterConfigurator {
     static func configureRegisterModule() -> UIViewController {
         let interfaceBuilder = InterfaceBuilder()
         let validator = Validator()
-        let networkService: RegisterServiceInput = NetworkService.shared
+        let networkService = NetworkService.shared
         
         let view = RegisterView(with: interfaceBuilder)
         let interactor = RegisterInteractor(networkManager: networkService)

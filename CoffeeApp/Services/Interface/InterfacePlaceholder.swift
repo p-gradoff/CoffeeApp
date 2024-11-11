@@ -21,4 +21,5 @@ enum PlaceholderType: String {
 enum ButtonTitle: String {
     case register = "Регистрация"
     case enter = "Войти"
+    case map = "На карте"
 }

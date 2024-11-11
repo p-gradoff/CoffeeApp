@@ -38,7 +38,9 @@ final class TableCell: UITableViewCell {
         nameLabel.text = name
         distanceLabel.text = distance
         
+        backgroundColor = .gray
         cellView.addSubviews(nameLabel, distanceLabel)
+        addSubview(cellView)
         
         cellView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()

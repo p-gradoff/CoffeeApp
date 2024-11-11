@@ -32,8 +32,6 @@ final class RegisterInteractor: RegisterInteractorInput {
             
             switch result {
             case .success:
-                // storageService.saveAuth(token);
-                // print("success")
                 output?.registeredSuccessfully()
             case .serverError(let err): output?.sendError(
                 with: AlertMessage.serverError.rawValue, Errors.messageFor(err: err.message)

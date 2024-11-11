@@ -18,7 +18,7 @@ final class DistanceManager {
     func getDistanceMetric(_ distance: Double) -> String {
         let intDistance = Int(distance)
         let formattedDistance = intDistance >= 1000 ?
-        DistanceMetric.kilometers(intDistance) : DistanceMetric.meters(intDistance)
+        DistanceMetric.kilometers(intDistance / 1000) : DistanceMetric.meters(intDistance)
         
         switch formattedDistance {
         case .meters(let int):

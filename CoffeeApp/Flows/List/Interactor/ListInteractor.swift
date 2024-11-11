@@ -31,41 +31,71 @@ final class ListInteractor {
         self.distanceManager = distanceManager
     }
     
-    private func getShopLocations() -> [Location] {
-        var locations: [Location] = []
+//    private func getShopLocations() -> LocationType {
+//        var locations: LocationType = []
+//        networkService.loadLocations { [weak self] result in
+//            guard let self = self else { return }
+//            // получаем список всех локаций
+//            switch result {
+//            case .success(let locationList):
+//                locations = locationList
+//            default:
+//                output?.sendError(with: AlertMessage.serverError.rawValue, Errors.messageFor(err: "Network error"))
+//            }
+//            return locations
+//        }
+//    }
+}
+
+extension ListInteractor: ListInteractorInput {
+    func getDistances() {
         networkService.loadLocations { [weak self] result in
             guard let self = self else { return }
             // получаем список всех локаций
             switch result {
             case .success(let locationList):
-                locations = locationList.locations
-            default:
-                output?.sendError(with: AlertMessage.serverError.rawValue, Errors.messageFor(err: "Network error"))
-            }
-        }
-        return locations
-    }
-}
-
-extension ListInteractor: ListInteractorInput {
-    func getDistances() {
-        var shopsData: [ShopInfo] = []
-        let shopLocations = getShopLocations()
-        
-        for shop in shopLocations {
-            locationService.getDistance(fromUserTo: shop.point) { result in
-                switch result {
-                case .success(let distance):
-                    let shopDistanceString = distanceManager.getDistanceMetric(distance)
-                    let shopInfo = ShopInfo(name: shop.name, distance: shopDistanceString)
-                    shopsData.append(shopInfo)
-                case .locationError(let err):
-                    output?.sendError(with: err, "Location Error")
+                var shopsData: [ShopInfo] = []
+                let shopLocations = locationList
+                
+                for shop in shopLocations {
+                    locationService.getDistance(fromUserTo: shop.point) { [weak self] result in
+                        guard let self = self else { return }
+                        
+                        switch result {
+                        case .success(let distance):
+                            let shopDistanceString = distanceManager.getDistanceMetric(distance)
+                            let shopInfo = ShopInfo(name: shop.name, distance: shopDistanceString)
+                            shopsData.append(shopInfo)
+                        case .locationError(let err):
+                            output?.sendError(
+                                with: err, AlertMessage.locationError.rawValue)
+                        }
+                    }
                 }
+                output?.sendShopsInfo(shopsData)
+            default:
+                output?.sendError(
+                    with: AlertMessage.serverError.rawValue, Errors.messageFor(err: AlertMessage.networkError.rawValue)
+                )
             }
         }
-        output?.sendShopsInfo(shopsData)
     }
+        
+//        for shop in shopLocations {
+//            locationService.getDistance(fromUserTo: shop.point) { result in
+//                switch result {
+//                case .success(let distance):
+//                    let shopDistanceString = distanceManager.getDistanceMetric(distance)
+//                    let shopInfo = ShopInfo(name: shop.name, distance: shopDistanceString)
+//                    shopsData.append(shopInfo)
+//                case .locationError(let err):
+//                    output?.sendError(with: err, "Location Error")
+//                }
+//            }
+//        }
+//        print(shopsData)
+//        output?.sendShopsInfo(shopsData)
+//    }
     
     /*
     func getDistances(completion: (Result<[ShopInfo], Error>) -> Void) {

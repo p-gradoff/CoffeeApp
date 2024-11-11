@@ -8,6 +8,10 @@
 import Foundation
 import UIKit
 
+protocol ButtonBuilder {
+    func createButton(withTitle title: String) -> UIButton
+}
+
 protocol AccountInterfaceBuilder {
     func createLabel(withHeader section: SectionType) -> UILabel
     func createTextField(withPlaceholder placeholder: PlaceholderType) -> UITextField
@@ -15,7 +19,7 @@ protocol AccountInterfaceBuilder {
     func createButton(withTitle title: String) -> UIButton
 }
 
-final class InterfaceBuilder: AccountInterfaceBuilder {
+final class InterfaceBuilder: AccountInterfaceBuilder, ButtonBuilder {
     func createLabel(withHeader section: SectionType) -> UILabel {
         {
             $0.text = section.rawValue

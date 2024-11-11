@@ -5,20 +5,23 @@
 //  Created by Павел Градов on 09.11.2024.
 //
 
-struct LocationList: Codable {
-    let locations: [Location]
-}
+//struct LocationList: Codable {
+//    let locations: Info
+//}
 
-struct Location: Codable {
+// MARK: - LocationElement
+struct LocationElement: Codable {
     let id: Int
     let name: String
     let point: Point
 }
 
+// MARK: - Point
 struct Point: Codable {
-    let latitude: String
-    let longtitude: String
+    let latitude, longitude: String
 }
+
+typealias LocationType = [LocationElement]
 
 struct Distance {
     enum Metric {

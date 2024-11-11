@@ -20,6 +20,7 @@ enum AlertMessage: String {
     case serverError = "Server Error"
     case networkError = "Network Error"
     case authorizationError = "Authorization Error"
+    case locationError = "Location Error"
 }
 
 final class Validator {

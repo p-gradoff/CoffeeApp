@@ -15,8 +15,7 @@ enum NetworkRequestCollection {
     
     func path() -> String {
         switch self {
-        case .register: 
-            return "/auth/register"
+        case .register: return "/auth/register"
         case .login: return "/auth/login"
         case .location(let id): return "/location/\(id)/menu"
         case .locations: return "/locations"
@@ -44,7 +43,7 @@ protocol AuthServiceInput: AnyObject {
 }
 
 protocol LocationListServiceInput: AnyObject {
-    func loadLocations(completion: @escaping (RequestResult<LocationList>) -> Void)
+    func loadLocations(completion: @escaping (RequestResult<LocationType>) -> Void)
 }
 
 final class NetworkService {
@@ -122,7 +121,6 @@ final class NetworkService {
     }
 }
 
-// TODO: method's enum
 extension NetworkService: RegisterServiceInput {
     func registerUser(withData data: User, completion: @escaping (RequestResult<TokenResponse>) -> Void) {
         let url = NetworkRequestCollection.register.absoluteURL
@@ -148,7 +146,7 @@ extension NetworkService: AuthServiceInput {
 }
 
 extension NetworkService: LocationListServiceInput {
-    func loadLocations(completion: @escaping (RequestResult<LocationList>) -> Void) {
+    func loadLocations(completion: @escaping (RequestResult<LocationType>) -> Void) {
         let url = NetworkRequestCollection.locations.absoluteURL
         let request = formRequest(url: url, method: RequestMethod.get.rawValue)
         

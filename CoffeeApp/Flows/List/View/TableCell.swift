@@ -16,6 +16,7 @@ final class TableCell: UITableViewCell {
         $0.layer.cornerRadius = 5
         $0.backgroundColor = .cellFilling
         $0.layer.shadowColor = UIColor.black.cgColor
+        $0.layer.shadowOffset = CGSize(width: 0, height: 3)
         $0.layer.shadowOpacity = 0.3
         return $0
     }(UIView())
@@ -38,7 +39,6 @@ final class TableCell: UITableViewCell {
         nameLabel.text = name
         distanceLabel.text = distance
         
-        backgroundColor = .gray
         cellView.addSubviews(nameLabel, distanceLabel)
         addSubview(cellView)
         

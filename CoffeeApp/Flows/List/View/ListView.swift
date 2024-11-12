@@ -25,7 +25,6 @@ final class ListView: UIViewController, UITableViewDataSource, UITableViewDelega
     private var tableData: [ShopInfo] = []
     
     private lazy var tableView: UITableView = {
-        $0.backgroundColor = .lightGray
         $0.dataSource = self
         $0.delegate = self
         $0.separatorStyle = .none
@@ -48,7 +47,13 @@ final class ListView: UIViewController, UITableViewDataSource, UITableViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Ближайшие кофейни"
+        // navigationController?.navigationBar.tintColor = .primaryText
+        loadTableData()
         setupViews()
+    }
+    
+    private func loadTableData() {
+        output?.getShopsInfo()
     }
     
     private func setupViews() {
@@ -57,9 +62,9 @@ final class ListView: UIViewController, UITableViewDataSource, UITableViewDelega
         view.addSubviews(tableView, mapButton)
         
         tableView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(15)
+            $0.top.equalToSuperview().offset(103)
             $0.horizontalEdges.equalToSuperview().inset(10)
-            $0.height.equalTo(567)
+            $0.bottom.equalToSuperview().inset(112)
         }
         
         mapButton.snp.makeConstraints {
@@ -75,13 +80,11 @@ final class ListView: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let tableData = shopsInfo
-        
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TableCell.reuseID, for: indexPath) as? TableCell else {
             return UITableViewCell()
         }
     
-        let item = tableData[indexPath.row]
+        let item = shopsInfo[indexPath.row]
         cell.setupCell(with: item.name, distance: item.distance)
         return cell
     }
@@ -91,14 +94,11 @@ final class ListView: UIViewController, UITableViewDataSource, UITableViewDelega
 
 extension ListView: ListViewInput, AlertProvider {
     var shopsInfo: [ShopInfo] {
-        get {
-            output?.getShopsInfo()
-            return tableData
-        }
+        get { tableData }
         set {
             tableData = newValue
             tableView.reloadData()
-            print(tableData)
+
         }
     }
     

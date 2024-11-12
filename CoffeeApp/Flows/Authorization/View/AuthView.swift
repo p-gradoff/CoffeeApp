@@ -55,6 +55,8 @@ final class AuthViewController: UIViewController {
         super.viewDidLoad()
         title = "Вход"
         navigationItem.hidesBackButton = true
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationController?.navigationBar.tintColor = .primaryText
         setupViews()
     }
     

@@ -80,40 +80,4 @@ extension ListInteractor: ListInteractorInput {
             }
         }
     }
-        
-//        for shop in shopLocations {
-//            locationService.getDistance(fromUserTo: shop.point) { result in
-//                switch result {
-//                case .success(let distance):
-//                    let shopDistanceString = distanceManager.getDistanceMetric(distance)
-//                    let shopInfo = ShopInfo(name: shop.name, distance: shopDistanceString)
-//                    shopsData.append(shopInfo)
-//                case .locationError(let err):
-//                    output?.sendError(with: err, "Location Error")
-//                }
-//            }
-//        }
-//        print(shopsData)
-//        output?.sendShopsInfo(shopsData)
-//    }
-    
-    /*
-    func getDistances(completion: (Result<[ShopInfo], Error>) -> Void) {
-        var shopsData: [ShopInfo] = []
-        var shopLocations = getShopLocations()
-        
-        for shop in shopLocations {
-            locationService.getDistance(fromUserTo: shop.point) { result in
-                switch result {
-                case .success(let distance):
-                    let shopDistanceString = distanceManager.getDistanceMetric(distance)
-                    let shopInfo = ShopInfo(name: shop.name, distance: shopDistanceString)
-                    shopsData.append(shopInfo)
-                case .locationError(let err):
-                    output?.sendError(with: err, "Location Error")
-                }
-            }
-        }
-    }
-     */
 }

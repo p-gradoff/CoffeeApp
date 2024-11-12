@@ -48,10 +48,8 @@ final class RegisterView: UIViewController {
     
     private lazy var registerButton: UIButton = interfaceBuilder.createButton(withTitle: ButtonTitle.register.rawValue)
     
-    // , alert: AlertProvider
     init(with interfaceBuilder: AccountInterfaceBuilder) {
         self.interfaceBuilder = interfaceBuilder
-        // self.alert = alert
         super.init(nibName: nil, bundle: nil)
     }
     
